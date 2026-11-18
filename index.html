@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">
+<title>Обучение на админа в РБ (Roblox) — Тест на модератора и сертификат | AdminAcademy PRO</title>
+<meta name="description" content="Бесплатное обучение на админа в РБ (Роблокс). Пройди курс от хелпера до куратора, сдай онлайн-тест без подсказок и получи официальное резюме с ID для создателей плейсов в Roblox.">
+<meta name="keywords" content="обучение на админа в рб, как стать админом в роблокс, тест на модератора в рб, курс модератора roblox, AdminAcademy PRO">
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:'Segoe UI',sans-serif; background:#070b14; color:#f8fafc; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:14px 32px; background:#0f172a; border-bottom:1px solid #1e293b; }
+  .logo { font-size:20px; font-weight:900; color:#38bdf8; }
+  .nav { display:flex; gap:8px; }
+  .tab { background:#1e293b; color:#cbd5e1; border:1px solid #334155; padding:8px 14px; border-radius:9px; font-weight:700; cursor:pointer; }
+  .tab.active { background:#2563eb; color:#fff; }
+  .btn { background:#2563eb; color:#fff; border:none; padding:10px 16px; border-radius:9px; font-weight:700; cursor:pointer; }
+  .wrap { max-width:1060px; margin:24px auto; padding:0 20px; }
+  .card { background:#0f172a; border:1px solid #1e293b; border-radius:16px; padding:24px; margin-bottom:20px; }
+  .mod-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:14px; }
+  .mod-card { background:#0b1120; border:1px solid #1e293b; border-radius:12px; padding:16px; cursor:pointer; }
+  .mod-card.locked { opacity:0.45; cursor:not-allowed; }
+  .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; z-index:30; }
+  .modal-box { background:#0f172a; border:1px solid #334155; border-radius:16px; padding:24px; width:420px; }
+  input, select { width:100%; background:#070b14; border:1px solid #334155; color:#fff; padding:11px; border-radius:9px; margin:6px 0 12px; }
+  code { background:#1e293b; color:#38bdf8; padding:2px 6px; border-radius:4px; }
+</style></head><body>
+<header>
+  <div class="logo">🎓 AdminAcademy PRO</div>
+  <div class="nav">
+    <button class="tab active" id="tStudy" onclick="showTab('study')">📚 Курс обучения</button>
+    <button class="tab" id="tResume" onclick="showTab('resume')">📄 Моё Резюме</button>
+    <button class="tab" id="tDevs" onclick="showTab('devs')">🏢 База для Разработчиков</button>
+  </div>
+  <div id="rightAuth">
+    <button class="btn" style="background:#1e293b;" onclick="openAuth('login')">Войти</button>
+    <button class="btn" onclick="openAuth('reg')">Регистрация</button>
+  </div>
+</header>
+<div class="wrap">
+  <div id="welcomeBanner" class="card" style="text-align:center; padding:40px;">
+    <h1 style="color:#38bdf8; margin-top:0;">Обучение на админа в РБ (Roblox) — Академия модераторов</h1>
+    <p style="color:#94a3b8; max-width:650px; margin:0 auto 20px;">Пройдите курс (от 7 до 30 дней в зависимости от должности), сдайте уникальные тесты без подсказок (3 попытки, в зачёт идёт лучший балл) и получите официальное резюме с ID сертификата.</p>
+    <button class="btn" style="font-size:16px; padding:13px 26px;" onclick="openAuth('reg')">Начать обучение →</button>
+  </div>
+  <div id="studyView" style="display:none;">
+    <div class="card">
+      <h2 style="margin:0; color:#38bdf8;">Программа: <span id="roleBadge"></span></h2>
+      <div style="font-size:13px; color:#94a3b8; margin-top:6px;">Открыт день: <b id="dayNum" style="color:#4ade80;">1</b> из <b id="maxDayNum">7</b> • Новый день разблокируется каждые 24 часа.</div>
+    </div>
+    <div id="lessonPanel" class="card" style="display:none; border-color:#38bdf8;">
+      <button class="btn" style="background:#1e293b; margin-bottom:12px;" onclick="closeLesson()">← Назад к дням</button>
+      <h2 id="lesTitle" style="margin-top:0; color:#38bdf8;"></h2>
+      <div id="lesBody" style="line-height:1.65; background:#070b14; padding:20px; border-radius:12px; margin-bottom:16px;"></div>
+      <div id="startTestBox"></div>
+    </div>
+    <div id="quizPanel" class="card" style="display:none; border-color:#fbbf24;">
+      <div style="background:rgba(251,191,36,0.1); border:1px solid #fbbf24; color:#fbbf24; padding:10px; border-radius:8px; margin-bottom:14px;">🔒 <b>Режим экзамена:</b> Правила скрыты! Отвечайте по памяти.</div>
+      <div id="quizArea"></div>
+    </div>
+    <div class="mod-grid" id="modGrid"></div>
+  </div>
+  <div id="resumeView" style="display:none;"><div class="card" style="border:2px solid #38bdf8;">
+    <div style="font-size:12px; color:#38bdf8; font-weight:800;">ОФИЦИАЛЬНОЕ РЕЗЮМЕ • ID: <b id="rCert"></b></div>
+    <h1 id="rUser" style="margin:8px 0 4px;"></h1>
+    <div id="rSub" style="color:#94a3b8; margin-bottom:16px;"></div>
+    <div style="background:#070b14; padding:16px; border-radius:12px; margin-bottom:16px; display:flex; gap:30px;">
+      <div><div style="font-size:12px; color:#94a3b8;">Лучший балл:</div><b id="rScore" style="font-size:28px; color:#4ade80;">0/100</b></div>
+      <div><div style="font-size:12px; color:#94a3b8;">Сдано дней:</div><b id="rMods" style="font-size:28px;">0/7</b></div>
+      <div><div style="font-size:12px; color:#94a3b8;">Статус:</div><b id="rHire" style="font-size:20px; color:#fbbf24;">В процессе</b></div>
+    </div>
+    <p id="rVerd"></p>
+    <button class="btn" id="copyBtn" style="background:#16a34a;" onclick="copyRes()">📋 Скопировать резюме для разработчика</button>
+  </div></div>
+  <div id="devsView" style="display:none;"><div class="card">
+    <h2 style="margin-top:0; color:#38bdf8;">🏢 База проверенных кандидатов</h2>
+    <div id="candsList"></div>
+  </div></div>
+</div>
+<div class="modal" id="authModal"><div class="modal-box">
+  <h3 id="mTitle" style="margin-top:0;">Регистрация</h3>
+  <input id="aUser" placeholder="Придумайте уникальный никнейм">
+  <input id="aPass" type="password" placeholder="Пароль">
+  <select id="aRole">
+    <option value="Хелпер (Helper)">🌱 Хелпер (Helper) — 7 дней</option>
+    <option value="Младший Модератор">🔰 Младший Модератор — 14 дней</option>
+    <option value="Старший Модератор">⚡ Старший Модератор — 21 день</option>
+    <option value="Администратор">🛡️ Администратор — 30 дней</option>
+    <option value="Старший Администратор">🔥 Старший Администратор — 30 дней</option>
+    <option value="Куратор Проекта">👑 Куратор Проекта — 30 дней</option>
+  </select>
+  <div style="display:flex; gap:10px;">
+    <button class="btn" style="flex:1; background:#1e293b;" onclick="document.getElementById('authModal').style.display='none'">Отмена</button>
+    <button class="btn" style="flex:1;" onclick="submitAuth()">Продолжить</button>
+  </div>
+</div></div>
+<script>
+let authMode = 'reg', me = '', prof = null, mods = [], curMod = null, curQs = [];
+function openAuth(m) { authMode = m; document.getElementById('mTitle').innerText = m === 'reg' ? 'Регистрация (уникальный ник)' : 'Вход в кабинет'; document.getElementById('aRole').style.display = m === 'reg' ? 'block' : 'none'; document.getElementById('authModal').style.display = 'flex'; }
+async function submitAuth() {
+  const user = document.getElementById('aUser').value.trim(), pass = document.getElementById('aPass').value.trim(), role = document.getElementById('aRole').value;
+  const r = await fetch('/api/auth', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mode:authMode, user, pass, role})});
+  const j = await r.json();
+  if (!j.ok) return alert(j.msg);
+  me = j.user; prof = j.profile; mods = j.modules;
+  document.getElementById('authModal').style.display = 'none'; document.getElementById('welcomeBanner').style.display = 'none';
+  document.getElementById('rightAuth').innerHTML = '<span style="color:#4ade80;font-weight:700;">👤 ' + me + ' (' + prof.cert_id + ')</span>';
+  showTab('study');
+}
+function showTab(t) {
+  if (!me && t !== 'devs') return openAuth('reg');
+  document.getElementById('welcomeBanner').style.display = 'none';
+  document.getElementById('studyView').style.display = t === 'study' ? 'block' : 'none';
+  document.getElementById('resumeView').style.display = t === 'resume' ? 'block' : 'none';
+  document.getElementById('devsView').style.display = t === 'devs' ? 'block' : 'none';
+  ['tStudy','tResume','tDevs'].forEach(id => document.getElementById(id).classList.remove('active'));
+  if (t === 'study') { document.getElementById('tStudy').classList.add('active'); closeLesson(); }
+  if (t === 'resume') { document.getElementById('tResume').classList.add('active'); renderResume(); }
+  if (t === 'devs') { document.getElementById('tDevs').classList.add('active'); loadDevs(); }
+}
+function renderMods() {
+  document.getElementById('roleBadge').innerText = prof.role; document.getElementById('dayNum').innerText = prof.unlocked_day; document.getElementById('maxDayNum').innerText = prof.max_days;
+  document.getElementById('modGrid').innerHTML = mods.map(m => {
+    const locked = m.day > prof.unlocked_day, tInfo = prof.tests[m.id] || {attempts:0, best:0};
+    return '<div class="mod-card ' + (locked?'locked':'') + '" onclick="' + (locked?'':"openMod('"+m.id+"')") + '"><div style="display:flex;justify-content:space-between;font-size:12px;color:#38bdf8;margin-bottom:6px;"><span>День ' + m.day + '</span><span>' + (locked?'🔒 День '+m.day:'🏆 Лучший: '+tInfo.best+'% ('+tInfo.attempts+'/3)') + '</span></div><div style="font-weight:800;margin-bottom:6px;">' + m.title + '</div><div style="font-size:13px;color:#94a3b8;">' + m.short + '</div></div>';
+  }).join('');
+}
+function openMod(id) {
+  curMod = mods.find(x => x.id === id);
+  document.getElementById('modGrid').style.display = 'none'; document.getElementById('quizPanel').style.display = 'none'; document.getElementById('lessonPanel').style.display = 'block';
+  document.getElementById('lesTitle').innerText = curMod.title; document.getElementById('lesBody').innerHTML = curMod.text;
+  const tInfo = prof.tests[id] || {attempts:0, best:0};
+  document.getElementById('startTestBox').innerHTML = tInfo.attempts >= 3 ? '<b style="color:#4ade80;">✅ Все 3 попытки пройдены! Лучший балл: ' + tInfo.best + '%</b>' : '<button class="btn" style="width:100%;background:#16a34a;" onclick="beginTest()">📝 Начать тест (Правила скроются! Попыток: ' + (3 - tInfo.attempts) + ')</button>';
+}
+async function beginTest() {
+  document.getElementById('lessonPanel').style.display = 'none'; document.getElementById('quizPanel').style.display = 'block';
+  const tInfo = prof.tests[curMod.id] || {attempts:0, best:0};
+  document.getElementById('quizArea').innerHTML = '⏳ ИИ генерирует уникальный тест...';
+  const r = await fetch('/api/get_quiz', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({mod_id:curMod.id, role:prof.role})});
+  const j = await r.json(); curQs = j.questions;
+  document.getElementById('quizArea').innerHTML = '<h3>📝 ' + curMod.title + ' (Попытка ' + (tInfo.attempts+1) + '/3)</h3>' + curQs.map((q,i) => '<div style="background:#070b14;padding:12px;border-radius:10px;margin-bottom:10px;"><b>'+(i+1)+'. '+q.q+'</b>' + q.opts.map((o,oi) => '<label style="display:block;margin:6px 0;"><input type="radio" name="qq'+i+'" value="'+oi+'" style="width:auto;margin-right:8px;">'+o+'</label>').join('') + '</div>').join('') + '<button class="btn" style="width:100%;background:#16a34a;" onclick="sendQuiz()">Завершить</button>';
+}
+async function sendQuiz() {
+  let ok = 0;
+  for (let i=0; i<curQs.length; i++) { const c = document.querySelector('input[name="qq'+i+'"]:checked'); if (!c) return alert('Ответьте на все вопросы!'); if (parseInt(c.value) === curQs[i].ans) ok++; }
+  const score = Math.round((ok / curQs.length) * 100);
+  const r = await fetch('/api/submit_quiz', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user:me, mod_id:curMod.id, score})});
+  const j = await r.json();
+  if (j.ok) { prof = j.profile; alert('Результат: ' + score + '%\nЛучший балл: ' + j.t_info.best + '%'); openMod(curMod.id); }
+}
+function closeLesson() { document.getElementById('lessonPanel').style.display = 'none'; document.getElementById('quizPanel').style.display = 'none'; document.getElementById('modGrid').style.display = 'grid'; renderMods(); }
+function renderResume() { document.getElementById('rCert').innerText = prof.cert_id; document.getElementById('rUser').innerText = me; document.getElementById('rSub').innerText = 'Должность: ' + prof.role; document.getElementById('rScore').innerText = prof.best_score + '/100'; document.getElementById('rMods').innerText = Object.keys(prof.tests).length + '/' + prof.max_days; document.getElementById('rHire').innerText = prof.best_score >= 70 ? 'ПРИНЯТ ✅' : 'НУЖНО 70+ ⏳'; document.getElementById('rVerd').innerText = prof.verdict; }
+function copyRes() { navigator.clipboard.writeText('🎓 РЕЗЮМЕ ADMINACADEMY PRO\n👤 Ник: ' + me + '\n🛡️ Должность: ' + prof.role + '\n🏆 Лучший балл: ' + prof.best_score + '/100\n🆔 ID: ' + prof.cert_id); document.getElementById('copyBtn').innerText = '✅ Скопировано!'; }
+async function loadDevs() { const r = await fetch('/api/candidates'); const arr = await r.json(); document.getElementById('candsList').innerHTML = arr.map(c => '<div style="background:#070b14;padding:14px;border-radius:10px;margin-bottom:8px;display:flex;justify-content:space-between;"><div><b style="color:#38bdf8;">'+c.user+'</b> ('+c.cert_id+') — '+c.role+'<div style="font-size:13px;color:#94a3b8;">'+c.verdict+'</div></div><b style="color:#4ade80;font-size:20px;">'+c.score+'/100</b></div>').join('') || 'Пока нет выпускников.'; }
+</script></body></html>
